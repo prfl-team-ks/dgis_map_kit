@@ -27,15 +27,14 @@ class DGisMapController : NSObject, FlutterPlatformView {
         self.registrar = registrar;
         self.mapConfig = cnfg;
         
-        //        let filePath = NSHomeDirectory() + "dgismaptoken.key"
-        //        if let data = self.mapConfig.token.data(using: .utf8) {
-        //            FileManager.default.createFile(atPath: filePath, contents: data, attributes: nil)
-        //        }
-        
-        //var apiKeyOptions = ApiKeyOptions(apiKeyFile: File(path: filePath));
+        let filePath = NSHomeDirectory() + "/dgissdk.key"
+        if let data = self.mapConfig.token.data(using: .utf8) {
+            FileManager.default.createFile(atPath: filePath, contents: data, attributes: nil)
+        }
+
         if DGisMapController.sdk == nil {
-            let apiKeys = APIKeys(directory: "dir", map: self.mapConfig.token);
-            DGisMapController.sdk = DGis.Container(apiKeys: apiKeys!)
+            let apiKeyOptions = ApiKeyOptions(apiKeyFile: File(path: filePath))
+            DGisMapController.sdk = DGis.Container(apiKeyOptions: apiKeyOptions)
         }
         
         var mapOptions = MapOptions.default;

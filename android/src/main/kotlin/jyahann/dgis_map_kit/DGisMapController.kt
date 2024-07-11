@@ -10,6 +10,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import ru.dgis.sdk.map.MapView
+import ru.dgis.sdk.map.MapTheme
 import java.util.concurrent.CompletableFuture
 
 class DGisMapController(
@@ -40,11 +41,11 @@ class DGisMapController(
 
     init {
         if (sdkContext == null) {
-            sdkContext = initializeDGis(context, mapConfig.token)
+            sdkContext = initializeDGis(context)
         }
         this.gisView = MapView(context)
         if (mapConfig.theme == "LIGHT") {
-            gisView.setTheme("day")
+            gisView.setTheme(MapTheme.defaultTheme)
         }
 
         this.map = CompletableFuture<ru.dgis.sdk.map.Map>()
@@ -156,9 +157,9 @@ class DGisMapController(
                 "map#setTheme" -> {
                     var theme: String? = getMethodArgument(args, "theme")
                     if (theme == "LIGHT") {
-                        gisView.setTheme("day")
+                        gisView.setTheme(MapTheme.defaultTheme)
                     } else {
-                        gisView.setTheme("night")
+                        gisView.setTheme(MapTheme.defaultDarkTheme)
                     }
                     result.success(null)
                 }

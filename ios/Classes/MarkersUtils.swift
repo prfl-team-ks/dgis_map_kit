@@ -12,7 +12,7 @@ class MarkersUtils {
         let iconOptions = mapClusterer["iconOptions"] as! Dictionary<String, Any>;
         let assetLookupKey = registrar.lookupKey(forAsset: mapClusterer["icon"] as! String);
         let image = UIImage.loadFromFile(imagePath: assetLookupKey);
-        let icon = sdk.imageFactory.make(image: image!)
+        let icon = self.makeImageFactory(sdk: sdk).make(image: image!)
         
         return SimpleClusterOptions(
             icon: icon,
@@ -52,7 +52,7 @@ class MarkersUtils {
         let iconOptions = marker["iconOptions"] as! Dictionary<String, Any>;
         let assetLookupKey = registrar.lookupKey(forAsset: marker["icon"] as! String);
         let image = UIImage.loadFromFile(imagePath: assetLookupKey);
-        let icon = sdk.imageFactory.make(image: image!)
+        let icon = self.makeImageFactory(sdk: sdk).make(image: image!)
         
         return SimpleClusterOptions(
             icon: icon,
@@ -92,7 +92,7 @@ class MarkersUtils {
         let iconOptions = marker["iconOptions"] as! Dictionary<String, Any>;
         let assetLookupKey = registrar.lookupKey(forAsset: marker["icon"] as! String);
         let image = UIImage.loadFromFile(imagePath: assetLookupKey);
-        let icon = sdk.imageFactory.make(image: image!)
+        let icon = self.makeImageFactory(sdk: sdk).make(image: image!)
         
         let options = MarkerOptions(
             position: GeoPointWithElevation(
@@ -131,7 +131,17 @@ class MarkersUtils {
             animatedAppearance: iconOptions["animatedAppearance"] as! Bool
         );
         
-        return Marker(options: options);
+        do {
+            return try Marker(options: options);
+        } catch let error as SimpleError {
+            let errorMessage = "Get marker error: \(error.description)"
+            print(errorMessage)
+            fatalError(errorMessage)
+        } catch {
+            let errorMessage = "Get marker error: \(error)"
+            print(errorMessage)
+            fatalError(errorMessage)
+         }
     }
     
     static func getTextStyleFromDart(textStyle: Dictionary<String, Any>) -> TextStyle {
@@ -172,4 +182,16 @@ class MarkersUtils {
             y: Float(anchor["y"] as! Double)
         )
     }
+
+    static func makeImageFactory(sdk: DGis.Container) -> IImageFactory {
+    		do {
+    			return try sdk.makeImageFactory()
+    		} catch let error as SimpleError {
+    			let errorMessage = "IImageFactory initialization error: \(error.description)"
+    			fatalError(errorMessage)
+    		} catch {
+    			let errorMessage = "IImageFactory initialization error: \(error)"
+    			fatalError(errorMessage)
+    		}
+    	}
 }
